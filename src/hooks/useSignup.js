@@ -2,7 +2,7 @@
 import { firebaseAuth } from "../firebase/config";
 // hooks
 import { useEffect, useState } from "react";
-import { useAuth } from "./useAuth";
+import useAuth from "./useAuth";
 
 export default function useSignup() {
   const [isCancelled, setIsCancelled] = useState(false);
