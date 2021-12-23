@@ -10,16 +10,33 @@ export default function Signup() {
     const [password, setPassword] = useState('');
     const [displayName, setDisplayName] = useState('');
     const [thumbnail, setThumbnail] = useState(null);
-    const { signup, isPending } = useSignup();
+    const [errorsInCase,setErrorsInCase] = useState('')
+    const { signup, error, isPending } = useSignup();
     const nav = useNavigate();
     const handleSignupSubmit = (e) => {
         e.preventDefault();
-        signup(email, password, displayName);
-        if(!isPending){
-            nav('/');
+        signup(email, password, displayName, thumbnail, 'userData');
+        
 
+    }
+    function handleFileInputChange(e){
+        setThumbnail(null);
+        let selectedFile = e.target.files[0];
+        if(!selectedFile){
+            setErrorsInCase('please enter a file')
+            return;
         }
-
+        if(selectedFile.type !== "image/png" && selectedFile.type !== "image/jpeg"){
+            setErrorsInCase('uploaded file is not valid as image file.');
+            return;
+        }
+        if(selectedFile.size > 30000){
+            setErrorsInCase('please enter a file with size of less than 3KB')
+            return;
+        }
+        setErrorsInCase('');
+        setThumbnail(selectedFile);
+        console.log('th updated');
     }
     return (
         <form onSubmit={(e) => handleSignupSubmit(e)} className='auth-form'>
@@ -38,9 +55,12 @@ export default function Signup() {
             </label>
             <label>
                 <span>Avatar:</span>
-                <input onChange={(e) => setThumbnail(e.target.files[0])} type="file"  />
+                <input onChange={handleFileInputChange} type="file"  />
             </label>
-            <button type='submit' className='btn'>Submit</button>
+            { errorsInCase && <p className="error" style={{color: 'red'}}>{errorsInCase}</p>}
+            { error && <p className='error' style={{color: 'red'}}>{error}</p>}
+            { !isPending && <button type='submit' className='btn'>Submit</button>}
+            { isPending && <button type='submit' className='btn' disabled>Pending...</button>}
 
         </form>
     )

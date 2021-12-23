@@ -3,6 +3,7 @@
   min-width: 300px;
   background: var(--primary-color);
   min-height: 100vh;
+  box-sizing: border-box;
   position: relative;
   color: #fff;
 }
@@ -21,12 +22,16 @@
   margin-top: 80px;
   margin-left: 20px;
 }
+.sidebar .links li {
+  margin-top: 10px;
+}
 .sidebar .links a {
   display: flex;
   padding: 10px;
   text-decoration: none;
   width: 100%;
   color: #fff;
+  box-sizing: border-box;
 }
 .sidebar .links img {
   margin-right: 10px;

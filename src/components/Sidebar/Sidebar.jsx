@@ -1,19 +1,25 @@
 
 // routing
 import { NavLink } from 'react-router-dom'
-
+// hooks
+import useAuth from '../../hooks/useAuth'
 // styles
 import './Sidebar.css'
 // svg(s)
 import dashboardIcon from '../../asset/images/dashboard_icon.svg'
 import addIcon from '../../asset/images/add_icon.svg'
 export default function Sidebar() {
+    const { user } = useAuth();
     return (
         <div className='sidebar'>
             <div className="sidebar-content">
                 <div className="user">
-                    {/* avatar and username */}
-                    <p>Hey {/*user*/}</p>
+                    { user && (
+                        <>
+                            <img src={user.photoURL} alt='user profile' style={{borderRadius: '50%'}} />
+                            <p>Hi {user.displayName}</p>
+                        </>
+                    )}
                 </div>
                 <nav className='links'>
                     <ul>

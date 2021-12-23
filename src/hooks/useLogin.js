@@ -1,7 +1,7 @@
 // firebase Authentication service
-import { firebaseAuth } from "../firebase/config";
+import { firebaseAuth, firestore } from "../firebase/config";
 // context Authentication
-import { useAuth } from "./useAuth";
+import useAuth from "./useAuth";
 // hooks
 import { useEffect, useReducer } from "react";
 
@@ -56,6 +56,11 @@ export default function useLogin() {
       if (!loginState.isCancelled && loginResponse) {
         dispatch({ type: "LOGIN", payload: loginResponse.user });
         authDispatch({ type: "LOGIN", payload: loginResponse.user });
+        // updating user online status
+        await firestore
+          .collection("userAuth")
+          .doc(loginResponse.user.uid)
+          .update({ online: true });
       }
     } catch (er) {
       if (!loginState.isCancelled) {
@@ -67,6 +72,6 @@ export default function useLogin() {
     return () => {
       dispatch({ type: "IS_CANCELLED" });
     };
-  });
+  }, []);
   return { ...loginState, loginAction };
 }

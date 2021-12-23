@@ -34,6 +34,7 @@ export function AuthContextProvider({ children }) {
       if (user) {
         dispatch({ type: "AUTH_IS_READY", payload: user });
         unsubFromFirebaseAuth();
+        console.log(user);
       }
     });
   }, []);

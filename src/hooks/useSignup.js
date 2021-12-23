@@ -1,5 +1,5 @@
 // firebase Authentication service
-import { firebaseAuth } from "../firebase/config";
+import { firebaseAuth, firestoreStorage, firestore } from "../firebase/config";
 // hooks
 import { useEffect, useState } from "react";
 import useAuth from "./useAuth";
@@ -10,7 +10,13 @@ export default function useSignup() {
   const [isPending, setIsPending] = useState(false);
   const { dispatch: authDispatch } = useAuth();
 
-  const signup = async (email, password, dispayName) => {
+  const signup = async (
+    email,
+    password,
+    dispayName,
+    thumbnail,
+    userCollection
+  ) => {
     setError(null);
     setIsPending(true);
     try {
@@ -19,19 +25,40 @@ export default function useSignup() {
         email,
         password
       );
+      // uploading the thumbnail to the storage
+      let thumbnailPath = `thumbnail/${signupResponse.user.uid}/thumbnail.png`;
+      const imgUploadResponse = await firestoreStorage
+        .ref(thumbnailPath)
+        .put(thumbnail);
+      const imgDownloadUrl = await imgUploadResponse.ref.getDownloadURL();
       if (signupResponse && !isCancelled && dispayName) {
         authDispatch({ type: "AUTH_IS_READY", payload: signupResponse.user });
         setIsPending(false);
+        // create a user document
+
+        let userData = {
+          online: true,
+          photoURL: imgDownloadUrl,
+          userName: dispayName,
+        };
+        const addUserDocument = await firestore
+          .collection(userCollection)
+          .doc(signupResponse.user.uid)
+          .set(userData);
+
+        await signupResponse.user
+          .updateProfile({ dispayName, photoURL: imgDownloadUrl })
+          .then(
+            () => {
+              setError(null);
+              setIsPending(false);
+            },
+            (err) => {
+              throw new Error(err.message);
+            }
+          );
         setIsPending(false);
-        await signupResponse.user.updateProfile({ dispayName }).then(
-          () => {
-            setError(null);
-            setIsPending(false);
-          },
-          (err) => {
-            throw new Error(err.message);
-          }
-        );
+        setError(null);
       }
     } catch (err) {
       setIsPending(false);
