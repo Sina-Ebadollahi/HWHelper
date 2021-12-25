@@ -21,6 +21,7 @@ import Project from "./pages/project/Project";
 import Settings from "./pages/Settings/Settings";
 // hooks
 import useAuth from "./hooks/useAuth";
+import UsersList from "./components/UsersList/UsersList";
 function App() {
   const { user, authIsReady } = useAuth();
 
@@ -28,18 +29,21 @@ function App() {
     <div className="App">
       {authIsReady && (
         <Router>
-          <Sidebar />
-          <Navbar />
-          <Routes>
-            <Route exact path="/" element={<Home />} />
-
-            <Route path="/Login" element={<Login />} />
-            <Route path="/Signup" element={<Signup />} />
-            <Route path="/create" element={<Create />} />
-            <Route path="/project/:id" element={<Project />} />
-            <Route path="/settings/:user" element={<Settings />} />
-            <Route path="*" element={<Notfound />} />
-          </Routes>
+          {user && <Sidebar />}
+          <div className="container">
+            <Navbar />
+            <Routes>
+              {/* TODO */}
+              <Route exact path="/" element={<Home />} />
+              <Route path="/Login" element={<Login />} />
+              <Route path="/Signup" element={<Signup />} />
+              <Route path="/create" element={<Create />} />
+              <Route path="/project/:id" element={<Project />} />
+              <Route path="/settings/:user" element={<Settings />} />
+              <Route path="*" element={<Notfound />} />
+            </Routes>
+          </div>
+          {user && <UsersList />}
         </Router>
       )}
     </div>

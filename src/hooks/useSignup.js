@@ -8,15 +8,9 @@ export default function useSignup() {
   const [isCancelled, setIsCancelled] = useState(false);
   const [error, setError] = useState(null);
   const [isPending, setIsPending] = useState(false);
-  const { dispatch: authDispatch } = useAuth();
+  const { dispatch } = useAuth();
 
-  const signup = async (
-    email,
-    password,
-    dispayName,
-    thumbnail,
-    userCollection
-  ) => {
+  const signup = async (email, password, dispayName, thumbnail) => {
     setError(null);
     setIsPending(true);
     try {
@@ -25,41 +19,30 @@ export default function useSignup() {
         email,
         password
       );
+      console.log(`in signup ${signupResponse.user.email}`);
       // uploading the thumbnail to the storage
       let thumbnailPath = `thumbnail/${signupResponse.user.uid}/thumbnail.png`;
       const imgUploadResponse = await firestoreStorage
         .ref(thumbnailPath)
         .put(thumbnail);
       const imgDownloadUrl = await imgUploadResponse.ref.getDownloadURL();
-      if (signupResponse && !isCancelled && dispayName) {
-        authDispatch({ type: "AUTH_IS_READY", payload: signupResponse.user });
-        setIsPending(false);
-        // create a user document
+      // if (!isCancelled) {
+      dispatch({ type: "LOGIN", payload: signupResponse.user });
+      await signupResponse.user.updateProfile({
+        displayName: dispayName,
+        photoURL: imgDownloadUrl,
+      });
+      // const addUserDocument =
+      await firestore.collection("userData").doc(signupResponse.user.uid).set({
+        online: true,
+        photoURL: imgDownloadUrl,
+        dispayName,
+      });
+      console.log("collection updated");
 
-        let userData = {
-          online: true,
-          photoURL: imgDownloadUrl,
-          userName: dispayName,
-        };
-        const addUserDocument = await firestore
-          .collection(userCollection)
-          .doc(signupResponse.user.uid)
-          .set(userData);
-
-        await signupResponse.user
-          .updateProfile({ dispayName, photoURL: imgDownloadUrl })
-          .then(
-            () => {
-              setError(null);
-              setIsPending(false);
-            },
-            (err) => {
-              throw new Error(err.message);
-            }
-          );
-        setIsPending(false);
-        setError(null);
-      }
+      setIsPending(false);
+      setError(null);
+      // }
     } catch (err) {
       setIsPending(false);
       setError(err.message);
@@ -67,6 +50,7 @@ export default function useSignup() {
   };
   useEffect(() => {
     return () => {
+      console.log("isCancelled");
       setIsCancelled(true);
     };
   });

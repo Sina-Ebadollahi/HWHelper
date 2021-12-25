@@ -45,3 +45,6 @@
 .sidebar .links .active img {
   filter: invert(40%);
 }
+.displayNameP {
+  padding: 2rem;
+}

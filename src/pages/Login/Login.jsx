@@ -3,19 +3,16 @@ import useLogin from '../../hooks/useLogin';
 import { useState } from 'react'
 // styles
 import './Login.css'
-import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { loginAction, error, isPending } = useLogin();
-    const nav = useNavigate();
     function handleLoginSubmit(e){
         e.preventDefault();
         loginAction(email, password)
         setEmail('');
         setPassword('');
-        nav('/');
     }
     return (
         <form onSubmit={(e) => handleLoginSubmit(e)} className='auth-form'>

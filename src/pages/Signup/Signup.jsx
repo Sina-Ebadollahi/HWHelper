@@ -15,7 +15,7 @@ export default function Signup() {
     const nav = useNavigate();
     const handleSignupSubmit = (e) => {
         e.preventDefault();
-        signup(email, password, displayName, thumbnail, 'userData');
+        signup(email, password, displayName, thumbnail);
         
 
     }

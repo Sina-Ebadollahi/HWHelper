@@ -22,12 +22,12 @@ export const useCollection = (collection, _query, _orderBy) => {
   useEffect(() => {
     // firestore refrence for easy usage
     let firestoreRefrence = firestore.collection(collection);
-    if (query) {
-      firestoreRefrence = firestoreRefrence.where(...query);
-    }
-    if (orderBy) {
-      firestoreRefrence = firestoreRefrence.orderBy(...orderBy);
-    }
+    // if (query) {
+    //   firestoreRefrence = firestoreRefrence.where(...query);
+    // }
+    // if (orderBy) {
+    //   firestoreRefrence = firestoreRefrence.orderBy(...orderBy);
+    // }
     const unSubscribe = firestoreRefrence.onSnapshot(
       (snapshot) => {
         let resultArray = [];

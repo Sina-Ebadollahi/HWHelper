@@ -3,75 +3,48 @@ import { firebaseAuth, firestore } from "../firebase/config";
 // context Authentication
 import useAuth from "./useAuth";
 // hooks
-import { useEffect, useReducer } from "react";
+import { useEffect, useState } from "react";
 
-let loginIntialize = {
-  isCancelled: false,
-  error: null,
-  isPending: false,
-};
-const loginReducer = (state, action) => {
-  switch (action.type) {
-    case "LOGIN_ACTION_FIRST":
-      return {
-        ...state,
-        error: null,
-        isPending: true,
-      };
-    case "IS_CANCELLED":
-      return {
-        ...state,
-        isCancelled: true,
-      };
-    case "LOGIN":
-      return {
-        isCancelled: false,
-      };
-    case "ERROR":
-      return {
-        ...state,
-        error: action.payload,
-        isPending: false,
-      };
-    default:
-      return state;
-  }
-};
 export default function useLogin() {
-  const [loginState, dispatch] = useReducer(loginReducer, loginIntialize);
-  const { dispatch: authDispatch } = useAuth();
-
+  const [isCancelled, setIsCancelled] = useState(false);
+  const [error, setError] = useState(null);
+  const [isPending, setIsPending] = useState(false);
+  const { dispatch } = useAuth();
   const loginAction = async (email, password) => {
-    dispatch({ type: "LOGIN_ACTION_FIRST" });
+    setIsPending(true);
+    setError(null);
     try {
       const loginResponse = await firebaseAuth.signInWithEmailAndPassword(
         email,
         password
       );
+      console.log(`in Login ${loginResponse.user.email}`);
       // if login was not successful
       if (!loginResponse) {
         throw new Error("Could not login Right Now!, Please try again later.");
       }
       // update the state if signin was successful
-      if (!loginState.isCancelled && loginResponse) {
+      if (loginResponse) {
         dispatch({ type: "LOGIN", payload: loginResponse.user });
-        authDispatch({ type: "LOGIN", payload: loginResponse.user });
         // updating user online status
         await firestore
           .collection("userAuth")
           .doc(loginResponse.user.uid)
-          .update({ online: true });
+          .set({ online: true });
+        setIsPending(false);
+        setError(null);
       }
     } catch (er) {
-      if (!loginState.isCancelled) {
-        dispatch({ type: "ERROR", payload: er.message });
-      }
+      // if (!isCancelled) {
+      setIsPending(false);
+      setError(er.message);
+      // }
     }
   };
   useEffect(() => {
     return () => {
-      dispatch({ type: "IS_CANCELLED" });
+      setIsCancelled(true);
     };
   }, []);
-  return { ...loginState, loginAction };
+  return { error, isPending, isCancelled, loginAction };
 }
