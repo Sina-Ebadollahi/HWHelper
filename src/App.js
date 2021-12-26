@@ -1,13 +1,7 @@
 // styles
 import "./App.css";
 // Route
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useNavigate,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 // components
 import Navbar from "./components/Navbar/Navbar";
 import Sidebar from "./components/Sidebar/Sidebar";
@@ -19,6 +13,7 @@ import Notfound from "./pages/Notfound/Notfound";
 import Create from "./pages/Create/Create";
 import Project from "./pages/project/Project";
 import Settings from "./pages/Settings/Settings";
+import Dashboard from "./pages/Dashboard/Dashboard";
 // hooks
 import useAuth from "./hooks/useAuth";
 import UsersList from "./components/UsersList/UsersList";
@@ -35,6 +30,7 @@ function App() {
             <Routes>
               {/* TODO */}
               <Route exact path="/" element={<Home />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/Login" element={<Login />} />
               <Route path="/Signup" element={<Signup />} />
               <Route path="/create" element={<Create />} />

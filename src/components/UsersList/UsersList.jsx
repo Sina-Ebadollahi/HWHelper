@@ -12,7 +12,7 @@ export default function UsersList() {
             { documents && documents.map((user) => (
                 <div key={user.id} className='user-list-item'>
                      <span className='online-user' style={user.online === true ? {backgroundColor: 'green'} : {backgroundColor: 'black'}}></span>
-                    <span>{user.dispayName}</span>
+                    <span>{user.displayName}</span>
                     <Avatar imgSrc={user.photoURL}/>
                 </div>
             ))}

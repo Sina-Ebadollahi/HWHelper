@@ -10,7 +10,7 @@ export default function useSignup() {
   const [isPending, setIsPending] = useState(false);
   const { dispatch } = useAuth();
 
-  const signup = async (email, password, dispayName, thumbnail) => {
+  const signup = async (email, password, displayName, thumbnail) => {
     setError(null);
     setIsPending(true);
     try {
@@ -29,14 +29,14 @@ export default function useSignup() {
       // if (!isCancelled) {
       dispatch({ type: "LOGIN", payload: signupResponse.user });
       await signupResponse.user.updateProfile({
-        displayName: dispayName,
+        displayName: displayName,
         photoURL: imgDownloadUrl,
       });
       // const addUserDocument =
       await firestore.collection("userData").doc(signupResponse.user.uid).set({
         online: true,
         photoURL: imgDownloadUrl,
-        dispayName,
+        displayName,
       });
       console.log("collection updated");
 

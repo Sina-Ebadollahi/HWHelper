@@ -28,7 +28,7 @@ export default function useLogin() {
         dispatch({ type: "LOGIN", payload: loginResponse.user });
         // updating user online status
         await firestore
-          .collection("userAuth")
+          .collection("userData")
           .doc(loginResponse.user.uid)
           .set({ online: true });
         setIsPending(false);
