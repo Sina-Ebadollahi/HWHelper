@@ -57,7 +57,7 @@ export default function Create() {
         }
         getLocationFunc('https://geolocation-db.com/json/');
         let userLocationData;
-        if(locationData){
+        if(locationData.IPv4 !== 'Not Found'){
              userLocationData = {
                 IP: locationData.IPv4,
                 country: locationData.country_name,
